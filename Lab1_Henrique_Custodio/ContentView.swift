@@ -1,20 +1,19 @@
-//
-//  ContentView.swift
-//  Lab1_Henrique_Custodio
-//
-//  Created by Henrique Custodio on 3/15/26.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @State private var currentNumber = 0
+    @State private var correctCount = 0
+    @State private var wrongCount = 0
+    @State private var attemptCount = 0
+    @State private var timeLeft = 5
+
     var body: some View {
         VStack(spacing: 25) {
             Text("Prime Number Game")
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            Text("0")
+            Text("\(currentNumber)")
                 .font(.system(size: 72, weight: .bold))
 
             HStack(spacing: 20) {
@@ -31,10 +30,10 @@ struct ContentView: View {
                 .font(.system(size: 50))
 
             VStack(spacing: 10) {
-                Text("Correct: 0")
-                Text("Wrong: 0")
-                Text("Attempts: 0")
-                Text("Time Left: 5")
+                Text("Correct: \(correctCount)")
+                Text("Wrong: \(wrongCount)")
+                Text("Attempts: \(attemptCount)")
+                Text("Time Left: \(timeLeft)")
             }
             .font(.title3)
         }
