@@ -6,6 +6,9 @@ struct ContentView: View {
     @State private var wrongCount = 0
     @State private var attemptCount = 0
     @State private var timeLeft = 5
+    
+    @State private var resultIcon = "questionmark.circle"
+    @State private var resultColor = Color.gray
 
     var body: some View {
         VStack(spacing: 25) {
@@ -26,8 +29,9 @@ struct ContentView: View {
                 .buttonStyle(.bordered)
             }
 
-            Image(systemName: "questionmark.circle")
+            Image(systemName: resultIcon)
                 .font(.system(size: 50))
+                .foregroundStyle(resultColor)
 
             VStack(spacing: 10) {
                 Text("Correct: \(correctCount)")
