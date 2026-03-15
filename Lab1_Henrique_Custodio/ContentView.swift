@@ -51,3 +51,20 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
+
+func isPrime(_ number: Int) -> Bool {
+    if number < 2 { return false }
+    if number == 2 { return true }
+    if number % 2 == 0 { return false }
+
+    let limit = Int(Double(number).squareRoot())
+
+    for i in stride(from: 3, through: limit, by: 2) {
+        if number % i == 0 {
+            return false
+        }
+    }
+
+    return true
+}
