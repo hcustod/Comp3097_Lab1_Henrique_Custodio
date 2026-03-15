@@ -38,6 +38,13 @@ struct ContentView: View {
             .font(.title3)
         }
         .padding()
+        .onAppear {
+            generateNewNumber()
+        }
+    }
+
+    func generateNewNumber() {
+        currentNumber = Int.random(in: 1...100)
     }
 }
 
