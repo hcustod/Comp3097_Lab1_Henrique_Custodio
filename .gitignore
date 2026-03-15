@@ -1,0 +1,100 @@
+# =========================
+# macOS system files
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# =========================
+# Xcode build artifacts
+# =========================
+build/
+DerivedData/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcuserdatad/
+*.xccheckout
+*.moved-aside
+*.xcscmblueprint
+
+# =========================
+# Swift Package Manager
+# =========================
+.build/
+Packages/
+Package.resolved
+
+# =========================
+# Xcode user-specific files
+# =========================
+xcuserdata/
+*.xcuserdatad
+*.xcuserstate
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+*.secret
+*.key
+*.pem
+*.p12
+
+# =========================
+# CocoaPods
+# =========================
+Pods/
+Podfile.lock
+
+# =========================
+# Carthage
+# =========================
+Carthage/Build/
+
+# =========================
+# Fastlane
+# =========================
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# =========================
+# Archives
+# =========================
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# =========================
+# Test / coverage output
+# =========================
+coverage/
+*.xcresult
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Misc
+# =========================
+*.lock
+node_modules/
