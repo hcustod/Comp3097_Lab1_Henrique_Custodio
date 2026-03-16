@@ -18,25 +18,25 @@ struct ContentView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var summaryMessage: String {
-        "Correct: \(correctCount)\nWrong: \(wrongCount)\nTimed Out: \(timeoutCount)"
+        Helpers.summaryMessage(
+            correctCount: correctCount,
+            wrongCount: wrongCount,
+            timeoutCount: timeoutCount
+        )
     }
 
     private var roundStatusMessage: String {
-        if attemptCount == 0 {
-            return "No rounds played yet"
-        }
-
-        return didTimeoutLastRound
-            ? "Previous round: Timed out"
-            : "Previous round: Answer submitted"
+        Helpers.roundStatusMessage(
+            attemptCount: attemptCount,
+            didTimeoutLastRound: didTimeoutLastRound
+        )
     }
 
     private var roundStatusColor: Color {
-        if attemptCount == 0 {
-            return .gray
-        }
-
-        return didTimeoutLastRound ? .orange : .blue
+        Helpers.roundStatusColor(
+            attemptCount: attemptCount,
+            didTimeoutLastRound: didTimeoutLastRound
+        )
     }
 
     var body: some View {
@@ -81,11 +81,9 @@ struct ContentView: View {
 
         }
         .padding()
-
         .onAppear {
             startNewRound()
         }
-
         .onReceive(timer) { _ in
             if timeLeft > 0 {
                 timeLeft -= 1
@@ -93,7 +91,6 @@ struct ContentView: View {
                 handleTimeout()
             }
         }
-
         .alert("Progress Summary", isPresented: $showSummaryDialog) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -108,7 +105,6 @@ struct ContentView: View {
     }
 
     private func answerSelected(_ userSaysPrime: Bool) {
-
         guard roundActive else { return }
 
         roundActive = false
@@ -121,7 +117,6 @@ struct ContentView: View {
     }
 
     private func handleTimeout() {
-
         guard roundActive else { return }
 
         roundActive = false
@@ -132,7 +127,6 @@ struct ContentView: View {
     }
 
     private func finishRound(correct: Bool) {
-
         attemptCount += 1
 
         if correct {

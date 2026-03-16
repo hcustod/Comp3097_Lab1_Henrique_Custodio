@@ -4,6 +4,7 @@
 //
 //  Created by Henrique Custodio on 3/15/26.
 //
+import SwiftUI
 import Foundation
 
 enum Helpers {
@@ -34,5 +35,26 @@ enum Helpers {
         return true
     }
 
+    static func summaryMessage(correctCount: Int, wrongCount: Int, timeoutCount: Int) -> String {
+        "Correct: \(correctCount)\nWrong: \(wrongCount)\nTimed Out: \(timeoutCount)"
+    }
+
+    static func roundStatusMessage(attemptCount: Int, didTimeoutLastRound: Bool) -> String {
+        if attemptCount == 0 {
+            return "No rounds played yet"
+        }
+
+        return didTimeoutLastRound
+            ? "Previous round: Timed out"
+            : "Previous round: Answer submitted"
+    }
+
+    static func roundStatusColor(attemptCount: Int, didTimeoutLastRound: Bool) -> Color {
+        if attemptCount == 0 {
+            return .gray
+        }
+
+        return didTimeoutLastRound ? .orange : .blue
+    }
 }
 
