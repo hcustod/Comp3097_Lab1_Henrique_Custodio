@@ -71,7 +71,14 @@ struct ContentView: View {
     }
 
     private func generateNewNumber() {
-        currentNumber = Int.random(in: 1...100)
+        let previousNumber = currentNumber
+        var newNumber = Int.random(in: 1...100)
+
+        while newNumber == previousNumber {
+            newNumber = Int.random(in: 1...100)
+        }
+
+        currentNumber = newNumber
         timeLeft = 5
         roundActive = true
     }
