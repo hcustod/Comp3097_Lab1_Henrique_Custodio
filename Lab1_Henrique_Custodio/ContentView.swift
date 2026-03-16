@@ -39,48 +39,130 @@ struct ContentView: View {
         )
     }
 
-    var body: some View {
-        VStack(spacing: 25) {
-
-            Text("Prime Number Game")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
-            Text("\(currentNumber)")
-                .font(.system(size: 72, weight: .bold))
-
-            HStack(spacing: 20) {
-
-                Button("Prime") {
-                    answerSelected(true)
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button("Not Prime") {
-                    answerSelected(false)
-                }
-                .buttonStyle(.bordered)
-            }
-
-            Image(systemName: result.icon)
-                .font(.system(size: 50))
-                .foregroundStyle(result.color)
-
-            Text(roundStatusMessage)
-                .font(.headline)
-                .foregroundStyle(roundStatusColor)
-
-            VStack(spacing: 10) {
-                Text("Correct: \(correctCount)")
-                Text("Wrong: \(wrongCount)")
-                Text("Attempts: \(attemptCount)")
-                Text("Timed Out: \(timeoutCount)")
-                Text("Time Left: \(timeLeft)")
-            }
-            .font(.title3)
-
+    private var timerColor: Color {
+        if timeLeft <= 1 {
+            return .red
+        } else if timeLeft <= 2 {
+            return .orange
+        } else {
+            return .cyan
         }
-        .padding()
+    }
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color.black,
+                    Color(red: 0.08, green: 0.02, blue: 0.16),
+                    Color(red: 0.02, green: 0.08, blue: 0.14)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 24) {
+
+                Text("Prime Number Game")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+
+                VStack(spacing: 10) {
+                    Text("TARGET NUMBER")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .tracking(2)
+                        .foregroundStyle(.cyan.opacity(0.85))
+
+                    Text("\(currentNumber)")
+                        .font(.system(size: 72, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 28)
+                .background(
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(Color.white.opacity(0.08))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 22)
+                                .stroke(Color.cyan.opacity(0.6), lineWidth: 1.5)
+                        )
+                )
+
+                HStack(spacing: 16) {
+                    Button("Prime") {
+                        answerSelected(true)
+                    }
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(Color.cyan.opacity(0.9))
+                    )
+                    .foregroundStyle(.black)
+
+                    Button("Not Prime") {
+                        answerSelected(false)
+                    }
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(Color.pink.opacity(0.9))
+                    )
+                    .foregroundStyle(.white)
+                }
+
+                HStack(spacing: 14) {
+                    Image(systemName: result.icon)
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundStyle(result.color)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(roundStatusMessage)
+                            .font(.headline)
+                            .foregroundStyle(roundStatusColor)
+
+                        Text("Time Left: \(timeLeft)")
+                            .font(.subheadline)
+                            .foregroundStyle(timerColor)
+                    }
+
+                    Spacer()
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 18)
+                        .fill(Color.white.opacity(0.07))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
+                )
+
+                VStack(spacing: 12) {
+                    statRow(title: "Correct", value: correctCount, valueColor: .green)
+                    statRow(title: "Wrong", value: wrongCount, valueColor: .red)
+                    statRow(title: "Attempts", value: attemptCount, valueColor: .white)
+                    statRow(title: "Timed Out", value: timeoutCount, valueColor: .orange)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.white.opacity(0.06))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.purple.opacity(0.35), lineWidth: 1)
+                        )
+                )
+
+                Spacer()
+            }
+            .padding()
+        }
         .onAppear {
             startNewRound()
         }
@@ -96,6 +178,20 @@ struct ContentView: View {
         } message: {
             Text(summaryMessage)
         }
+    }
+
+    private func statRow(title: String, value: Int, valueColor: Color) -> some View {
+        HStack {
+            Text(title)
+                .foregroundStyle(Color.white.opacity(0.85))
+
+            Spacer()
+
+            Text("\(value)")
+                .fontWeight(.bold)
+                .foregroundStyle(valueColor)
+        }
+        .font(.title3)
     }
 
     private func startNewRound() {
