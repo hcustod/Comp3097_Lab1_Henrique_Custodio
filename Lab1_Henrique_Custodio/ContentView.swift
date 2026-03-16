@@ -15,6 +15,10 @@ struct ContentView: View {
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
+    private var summaryMessage: String {
+        "Correct: \(correctCount)\nWrong: \(wrongCount)"
+    }
+
     var body: some View {
         VStack(spacing: 25) {
             Text("Prime Number Game")
@@ -62,7 +66,7 @@ struct ContentView: View {
         .alert("Progress Summary", isPresented: $showSummaryDialog) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text("Correct: \(correctCount)\nWrong: \(wrongCount)")
+            Text(summaryMessage)
         }
     }
 
