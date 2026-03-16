@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var wrongCount = 0
     @State private var attemptCount = 0
     @State private var timeLeft = 5
+    @State private var timeoutCount = 0
 
     @State private var resultIcon = "questionmark.circle"
     @State private var resultColor = Color.gray
@@ -17,7 +18,21 @@ struct ContentView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var summaryMessage: String {
-        "Correct: \(correctCount)\nWrong: \(wrongCount)"
+        "Correct: \(correctCount)\nWrong: \(wrongCount)\nTimed Out: \(timeoutCount)"
+    }
+
+    private var roundStatusMessage: String {
+        if attemptCount == 0 {
+            return "No rounds played yet"
+        }
+        return didTimeoutLastRound ? "Previous round: Timed out" : "Previous round: Answer submitted"
+    }
+
+    private var roundStatusColor: Color {
+        if attemptCount == 0 {
+            return .gray
+        }
+        return didTimeoutLastRound ? .orange : .blue
     }
 
     var body: some View {
@@ -45,10 +60,15 @@ struct ContentView: View {
                 .font(.system(size: 50))
                 .foregroundStyle(resultColor)
 
+            Text(roundStatusMessage)
+                .font(.headline)
+                .foregroundStyle(roundStatusColor)
+
             VStack(spacing: 10) {
                 Text("Correct: \(correctCount)")
                 Text("Wrong: \(wrongCount)")
                 Text("Attempts: \(attemptCount)")
+                Text("Timed Out: \(timeoutCount)")
                 Text("Time Left: \(timeLeft)")
             }
             .font(.title3)
@@ -65,7 +85,9 @@ struct ContentView: View {
             }
         }
         .alert("Progress Summary", isPresented: $showSummaryDialog) {
-            Button("OK", role: .cancel) { }
+            Button("OK", role: .cancel) {
+                showSummaryDialog = false
+            }
         } message: {
             Text(summaryMessage)
         }
@@ -82,7 +104,6 @@ struct ContentView: View {
         currentNumber = newNumber
         timeLeft = 5
         roundActive = true
-        didTimeoutLastRound = false
     }
 
     private func answerSelected(_ userSaysPrime: Bool) {
@@ -100,6 +121,7 @@ struct ContentView: View {
         guard roundActive else { return }
         roundActive = false
         didTimeoutLastRound = true
+        timeoutCount += 1
 
         finishRound(correct: false)
     }
