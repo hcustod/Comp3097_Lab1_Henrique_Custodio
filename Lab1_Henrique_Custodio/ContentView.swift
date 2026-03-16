@@ -116,6 +116,18 @@ struct ContentView: View {
                                 .stroke(Color.purple.opacity(0.35), lineWidth: 1)
                         )
                 )
+                
+                Button("Reset Game") {
+                    logic.resetGame()
+                }
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(Color.purple.opacity(0.9))
+                )
+                .foregroundStyle(.white)
 
                 Spacer()
             }

@@ -101,4 +101,20 @@ final class GameViewLogic: ObservableObject {
 
         startNewRound()
     }
+    
+    func resetGame() {
+        currentNumber = 0
+        correctCount = 0
+        wrongCount = 0
+        attemptCount = 0
+        timeLeft = 5
+        timeoutCount = 0
+
+        result = .neutral
+        showSummaryDialog = false
+        roundActive = true
+        didTimeoutLastRound = false
+
+        startNewRound()
+    }
 }
