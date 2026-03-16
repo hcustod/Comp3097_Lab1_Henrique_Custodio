@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var resultColor = Color.gray
     @State private var showSummaryDialog = false
     @State private var roundActive = true
+    @State private var didTimeoutLastRound = false
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -81,11 +82,13 @@ struct ContentView: View {
         currentNumber = newNumber
         timeLeft = 5
         roundActive = true
+        didTimeoutLastRound = false
     }
 
     private func answerSelected(_ userSaysPrime: Bool) {
         guard roundActive else { return }
         roundActive = false
+        didTimeoutLastRound = false
 
         let actualPrime = isPrime(currentNumber)
         let isCorrect = userSaysPrime == actualPrime
@@ -96,6 +99,7 @@ struct ContentView: View {
     private func handleTimeout() {
         guard roundActive else { return }
         roundActive = false
+        didTimeoutLastRound = true
 
         finishRound(correct: false)
     }
