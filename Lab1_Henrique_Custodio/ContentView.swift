@@ -15,6 +15,8 @@ struct ContentView: View {
     
     @State private var showSummaryDialog = false
 
+    @State private var roundActive = true
+    
     var body: some View {
         VStack(spacing: 25) {
             Text("Prime Number Game")
@@ -61,13 +63,23 @@ struct ContentView: View {
                 handleTimeout()
             }
         }
+        
+        .alert("Progress Summary", isPresented: $showSummaryDialog) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Correct: \(correctCount)\nWrong: \(wrongCount)")
+        }
     }
 
     func generateNewNumber() {
+        roundActive = true
         currentNumber = Int.random(in: 1...100)
     }
     
     func answerSelected(_ userSaysPrime: Bool) {
+        if !roundActive { return }
+        roundActive = false
+
         let actualPrime = isPrime(currentNumber)
         let isCorrect = userSaysPrime == actualPrime
 
@@ -108,6 +120,9 @@ struct ContentView: View {
     }
     
     func handleTimeout() {
+        if !roundActive { return }
+        roundActive = false
+
         attemptCount += 1
         wrongCount += 1
         resultIcon = "xmark.circle.fill"
