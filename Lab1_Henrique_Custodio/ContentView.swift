@@ -12,6 +12,8 @@ struct ContentView: View {
     
     @State private var resultIcon = "questionmark.circle"
     @State private var resultColor = Color.gray
+    
+    @State private var showSummaryDialog = false
 
     var body: some View {
         VStack(spacing: 25) {
@@ -81,6 +83,10 @@ struct ContentView: View {
             resultColor = .red
         }
 
+        if attemptCount % 10 == 0 {
+            showSummaryDialog = true
+        }
+
         generateNewNumber()
         timeLeft = 5
     }
@@ -106,6 +112,11 @@ struct ContentView: View {
         wrongCount += 1
         resultIcon = "xmark.circle.fill"
         resultColor = .red
+
+        if attemptCount % 10 == 0 {
+            showSummaryDialog = true
+        }
+
         generateNewNumber()
         timeLeft = 5
     }
