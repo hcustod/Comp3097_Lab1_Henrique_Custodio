@@ -55,6 +55,8 @@ struct ContentView: View {
         .onReceive(timer) { _ in
             if timeLeft > 0 {
                 timeLeft -= 1
+            } else {
+                handleTimeout()
             }
         }
     }
@@ -97,6 +99,15 @@ struct ContentView: View {
         }
 
         return true
+    }
+    
+    func handleTimeout() {
+        attemptCount += 1
+        wrongCount += 1
+        resultIcon = "xmark.circle.fill"
+        resultColor = .red
+        generateNewNumber()
+        timeLeft = 5
     }
 }
 
