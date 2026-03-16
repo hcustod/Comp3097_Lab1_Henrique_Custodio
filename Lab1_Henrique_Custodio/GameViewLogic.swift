@@ -4,6 +4,7 @@
 //
 //  Created by Henrique Custodio on 3/15/26.
 //
+
 import SwiftUI
 import Combine
 
@@ -44,13 +45,7 @@ final class GameViewLogic: ObservableObject {
     }
 
     var timerColor: Color {
-        if timeLeft <= 1 {
-            return .red
-        } else if timeLeft <= 2 {
-            return .orange
-        } else {
-            return .cyan
-        }
+        Helpers.timerColor(for: timeLeft)
     }
 
     func startNewRound() {
@@ -68,7 +63,6 @@ final class GameViewLogic: ObservableObject {
     }
 
     func answerSelected(_ userSaysPrime: Bool) {
-
         guard roundActive else { return }
 
         roundActive = false
@@ -81,7 +75,6 @@ final class GameViewLogic: ObservableObject {
     }
 
     func handleTimeout() {
-
         guard roundActive else { return }
 
         roundActive = false
@@ -92,7 +85,6 @@ final class GameViewLogic: ObservableObject {
     }
 
     private func finishRound(correct: Bool) {
-
         attemptCount += 1
 
         if correct {
@@ -103,7 +95,7 @@ final class GameViewLogic: ObservableObject {
             result = .wrong
         }
 
-        if attemptCount.isMultiple(of: 10) {
+        if Helpers.shouldShowSummary(for: attemptCount) {
             showSummaryDialog = true
         }
 

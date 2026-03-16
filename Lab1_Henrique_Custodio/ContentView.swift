@@ -3,51 +3,9 @@ import Combine
 
 struct ContentView: View {
 
-    @State private var currentNumber = 0
-    @State private var correctCount = 0
-    @State private var wrongCount = 0
-    @State private var attemptCount = 0
-    @State private var timeLeft = 5
-    @State private var timeoutCount = 0
-
-    @State private var result = Results.neutral
-    @State private var showSummaryDialog = false
-    @State private var roundActive = true
-    @State private var didTimeoutLastRound = false
+    @StateObject private var logic = GameViewLogic()
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
-    private var summaryMessage: String {
-        Helpers.summaryMessage(
-            correctCount: correctCount,
-            wrongCount: wrongCount,
-            timeoutCount: timeoutCount
-        )
-    }
-
-    private var roundStatusMessage: String {
-        Helpers.roundStatusMessage(
-            attemptCount: attemptCount,
-            didTimeoutLastRound: didTimeoutLastRound
-        )
-    }
-
-    private var roundStatusColor: Color {
-        Helpers.roundStatusColor(
-            attemptCount: attemptCount,
-            didTimeoutLastRound: didTimeoutLastRound
-        )
-    }
-
-    private var timerColor: Color {
-        if timeLeft <= 1 {
-            return .red
-        } else if timeLeft <= 2 {
-            return .orange
-        } else {
-            return .cyan
-        }
-    }
 
     var body: some View {
         ZStack {
@@ -75,7 +33,7 @@ struct ContentView: View {
                         .tracking(2)
                         .foregroundStyle(.cyan.opacity(0.85))
 
-                    Text("\(currentNumber)")
+                    Text("\(logic.currentNumber)")
                         .font(.system(size: 72, weight: .heavy, design: .rounded))
                         .foregroundStyle(.white)
                 }
@@ -92,7 +50,7 @@ struct ContentView: View {
 
                 HStack(spacing: 16) {
                     Button("Prime") {
-                        answerSelected(true)
+                        logic.answerSelected(true)
                     }
                     .font(.headline)
                     .frame(maxWidth: .infinity)
@@ -104,7 +62,7 @@ struct ContentView: View {
                     .foregroundStyle(.black)
 
                     Button("Not Prime") {
-                        answerSelected(false)
+                        logic.answerSelected(false)
                     }
                     .font(.headline)
                     .frame(maxWidth: .infinity)
@@ -117,18 +75,18 @@ struct ContentView: View {
                 }
 
                 HStack(spacing: 14) {
-                    Image(systemName: result.icon)
+                    Image(systemName: logic.result.icon)
                         .font(.system(size: 40, weight: .bold))
-                        .foregroundStyle(result.color)
+                        .foregroundStyle(logic.result.color)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(roundStatusMessage)
+                        Text(logic.roundStatusMessage)
                             .font(.headline)
-                            .foregroundStyle(roundStatusColor)
+                            .foregroundStyle(logic.roundStatusColor)
 
-                        Text("Time Left: \(timeLeft)")
+                        Text("Time Left: \(logic.timeLeft)")
                             .font(.subheadline)
-                            .foregroundStyle(timerColor)
+                            .foregroundStyle(logic.timerColor)
                     }
 
                     Spacer()
@@ -144,10 +102,10 @@ struct ContentView: View {
                 )
 
                 VStack(spacing: 12) {
-                    statRow(title: "Correct", value: correctCount, valueColor: .green)
-                    statRow(title: "Wrong", value: wrongCount, valueColor: .red)
-                    statRow(title: "Attempts", value: attemptCount, valueColor: .white)
-                    statRow(title: "Timed Out", value: timeoutCount, valueColor: .orange)
+                    statRow(title: "Correct", value: logic.correctCount, valueColor: .green)
+                    statRow(title: "Wrong", value: logic.wrongCount, valueColor: .red)
+                    statRow(title: "Attempts", value: logic.attemptCount, valueColor: .white)
+                    statRow(title: "Timed Out", value: logic.timeoutCount, valueColor: .orange)
                 }
                 .padding()
                 .background(
@@ -164,19 +122,15 @@ struct ContentView: View {
             .padding()
         }
         .onAppear {
-            startNewRound()
+            logic.startNewRound()
         }
         .onReceive(timer) { _ in
-            if timeLeft > 0 {
-                timeLeft -= 1
-            } else {
-                handleTimeout()
-            }
+            logic.tick()
         }
-        .alert("Progress Summary", isPresented: $showSummaryDialog) {
+        .alert("Progress Summary", isPresented: $logic.showSummaryDialog) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text(summaryMessage)
+            Text(logic.summaryMessage)
         }
     }
 
@@ -192,52 +146,6 @@ struct ContentView: View {
                 .foregroundStyle(valueColor)
         }
         .font(.title3)
-    }
-
-    private func startNewRound() {
-        currentNumber = Helpers.generateNewNumber(previousNumber: currentNumber)
-        timeLeft = 5
-        roundActive = true
-    }
-
-    private func answerSelected(_ userSaysPrime: Bool) {
-        guard roundActive else { return }
-
-        roundActive = false
-        didTimeoutLastRound = false
-
-        let actualPrime = Helpers.isPrime(currentNumber)
-        let isCorrect = userSaysPrime == actualPrime
-
-        finishRound(correct: isCorrect)
-    }
-
-    private func handleTimeout() {
-        guard roundActive else { return }
-
-        roundActive = false
-        didTimeoutLastRound = true
-        timeoutCount += 1
-
-        finishRound(correct: false)
-    }
-
-    private func finishRound(correct: Bool) {
-        attemptCount += 1
-
-        if correct {
-            correctCount += 1
-            result = .correct
-        } else {
-            wrongCount += 1
-            result = .wrong
-        }
-
-        if attemptCount.isMultiple(of: 10) {
-            showSummaryDialog = true
-        }
-
-        startNewRound()
     }
 }
 

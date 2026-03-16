@@ -9,7 +9,10 @@ import Foundation
 
 enum Helpers {
 
-    static func generateNewNumber(previousNumber: Int, range: ClosedRange<Int> = 1...100) -> Int {
+    static func generateNewNumber(
+        previousNumber: Int,
+        range: ClosedRange<Int> = 1...100
+    ) -> Int {
         var newNumber = Int.random(in: range)
 
         while newNumber == previousNumber {
@@ -35,11 +38,22 @@ enum Helpers {
         return true
     }
 
-    static func summaryMessage(correctCount: Int, wrongCount: Int, timeoutCount: Int) -> String {
-        "Correct: \(correctCount)\nWrong: \(wrongCount)\nTimed Out: \(timeoutCount)"
+    static func summaryMessage(
+        correctCount: Int,
+        wrongCount: Int,
+        timeoutCount: Int
+    ) -> String {
+        """
+        Correct: \(correctCount)
+        Wrong: \(wrongCount)
+        Timed Out: \(timeoutCount)
+        """
     }
 
-    static func roundStatusMessage(attemptCount: Int, didTimeoutLastRound: Bool) -> String {
+    static func roundStatusMessage(
+        attemptCount: Int,
+        didTimeoutLastRound: Bool
+    ) -> String {
         if attemptCount == 0 {
             return "No rounds played yet"
         }
@@ -49,12 +63,28 @@ enum Helpers {
             : "Previous round: Answer submitted"
     }
 
-    static func roundStatusColor(attemptCount: Int, didTimeoutLastRound: Bool) -> Color {
+    static func roundStatusColor(
+        attemptCount: Int,
+        didTimeoutLastRound: Bool
+    ) -> Color {
         if attemptCount == 0 {
             return .gray
         }
 
         return didTimeoutLastRound ? .orange : .blue
     }
-}
 
+    static func timerColor(for timeLeft: Int) -> Color {
+        if timeLeft <= 1 {
+            return .red
+        } else if timeLeft <= 2 {
+            return .orange
+        } else {
+            return .cyan
+        }
+    }
+
+    static func shouldShowSummary(for attemptCount: Int) -> Bool {
+        attemptCount.isMultiple(of: 10)
+    }
+}
