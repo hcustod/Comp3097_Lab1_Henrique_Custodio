@@ -1,4 +1,7 @@
 import SwiftUI
+internal import Combine
+
+let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
 struct ContentView: View {
     @State private var currentNumber = 0
@@ -43,12 +46,16 @@ struct ContentView: View {
             }
             .font(.title3)
             
-            
-            
         }
         .padding()
         .onAppear {
             generateNewNumber()
+        }
+        
+        .onReceive(timer) { _ in
+            if timeLeft > 0 {
+                timeLeft -= 1
+            }
         }
     }
 
