@@ -1,7 +1,8 @@
 import SwiftUI
-internal import Combine
+import Combine
 
 struct ContentView: View {
+
     @State private var currentNumber = 0
     @State private var correctCount = 0
     @State private var wrongCount = 0
@@ -9,8 +10,7 @@ struct ContentView: View {
     @State private var timeLeft = 5
     @State private var timeoutCount = 0
 
-    @State private var resultIcon = "questionmark.circle"
-    @State private var resultColor = Color.gray
+    @State private var result = Results.neutral
     @State private var showSummaryDialog = false
     @State private var roundActive = true
     @State private var didTimeoutLastRound = false
@@ -25,18 +25,23 @@ struct ContentView: View {
         if attemptCount == 0 {
             return "No rounds played yet"
         }
-        return didTimeoutLastRound ? "Previous round: Timed out" : "Previous round: Answer submitted"
+
+        return didTimeoutLastRound
+            ? "Previous round: Timed out"
+            : "Previous round: Answer submitted"
     }
 
     private var roundStatusColor: Color {
         if attemptCount == 0 {
             return .gray
         }
+
         return didTimeoutLastRound ? .orange : .blue
     }
 
     var body: some View {
         VStack(spacing: 25) {
+
             Text("Prime Number Game")
                 .font(.largeTitle)
                 .fontWeight(.bold)
@@ -45,6 +50,7 @@ struct ContentView: View {
                 .font(.system(size: 72, weight: .bold))
 
             HStack(spacing: 20) {
+
                 Button("Prime") {
                     answerSelected(true)
                 }
@@ -56,9 +62,9 @@ struct ContentView: View {
                 .buttonStyle(.bordered)
             }
 
-            Image(systemName: resultIcon)
+            Image(systemName: result.icon)
                 .font(.system(size: 50))
-                .foregroundStyle(resultColor)
+                .foregroundStyle(result.color)
 
             Text(roundStatusMessage)
                 .font(.headline)
@@ -72,11 +78,14 @@ struct ContentView: View {
                 Text("Time Left: \(timeLeft)")
             }
             .font(.title3)
+
         }
         .padding()
+
         .onAppear {
-            generateNewNumber()
+            startNewRound()
         }
+
         .onReceive(timer) { _ in
             if timeLeft > 0 {
                 timeLeft -= 1
@@ -84,41 +93,37 @@ struct ContentView: View {
                 handleTimeout()
             }
         }
+
         .alert("Progress Summary", isPresented: $showSummaryDialog) {
-            Button("OK", role: .cancel) {
-                showSummaryDialog = false
-            }
+            Button("OK", role: .cancel) { }
         } message: {
             Text(summaryMessage)
         }
     }
 
-    private func generateNewNumber() {
-        let previousNumber = currentNumber
-        var newNumber = Int.random(in: 1...100)
-
-        while newNumber == previousNumber {
-            newNumber = Int.random(in: 1...100)
-        }
-
-        currentNumber = newNumber
+    private func startNewRound() {
+        currentNumber = Helpers.generateNewNumber(previousNumber: currentNumber)
         timeLeft = 5
         roundActive = true
     }
 
     private func answerSelected(_ userSaysPrime: Bool) {
+
         guard roundActive else { return }
+
         roundActive = false
         didTimeoutLastRound = false
 
-        let actualPrime = isPrime(currentNumber)
+        let actualPrime = Helpers.isPrime(currentNumber)
         let isCorrect = userSaysPrime == actualPrime
 
         finishRound(correct: isCorrect)
     }
 
     private func handleTimeout() {
+
         guard roundActive else { return }
+
         roundActive = false
         didTimeoutLastRound = true
         timeoutCount += 1
@@ -127,39 +132,22 @@ struct ContentView: View {
     }
 
     private func finishRound(correct: Bool) {
+
         attemptCount += 1
 
         if correct {
             correctCount += 1
-            resultIcon = "checkmark.circle.fill"
-            resultColor = .green
+            result = .correct
         } else {
             wrongCount += 1
-            resultIcon = "xmark.circle.fill"
-            resultColor = .red
+            result = .wrong
         }
 
         if attemptCount.isMultiple(of: 10) {
             showSummaryDialog = true
         }
 
-        generateNewNumber()
-    }
-
-    private func isPrime(_ number: Int) -> Bool {
-        if number < 2 { return false }
-        if number == 2 { return true }
-        if number.isMultiple(of: 2) { return false }
-
-        let limit = Int(Double(number).squareRoot())
-
-        for i in stride(from: 3, through: limit, by: 2) {
-            if number.isMultiple(of: i) {
-                return false
-            }
-        }
-
-        return true
+        startNewRound()
     }
 }
 
